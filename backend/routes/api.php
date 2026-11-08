@@ -10,4 +10,7 @@ Route::get('/health', function () {
         
     ]);
 });
-Route::get('/weather/current', [WeatherController::class, 'current']);
+Route::get('/weather/current', [WeatherController::class, 'current'])
+    ->middleware('throttle:weather');
+Route::get('/weather/forecast', [WeatherController::class, 'forecast'])
+    ->middleware('throttle:weather');

@@ -34,4 +34,29 @@ class WeatherController extends Controller
             'data' => $weather,
         ]);
     }
+
+            public function forecast(
+            Request $request,
+            WeatherService $weatherService
+            ): JsonResponse {
+            $validated = $request->validate([
+                'latitude' => ['required', 'numeric', 'between:-90,90'],
+                'longitude' => ['required', 'numeric', 'between:-180,180'],
+            ]);
+
+            try {
+                $forecast = $weatherService->forecast(
+                    (float) $validated['latitude'],
+                    (float) $validated['longitude']
+                );
+            } catch (ConnectionException | RequestException $exception) {
+                return response()->json([
+                    'message' => 'Prakiraan cuaca sementara tidak tersedia. Silakan coba lagi.',
+                ], 503);
+            }
+
+            return response()->json([
+                'data' => $forecast,
+            ]);
+        }
 }
